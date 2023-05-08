@@ -43,6 +43,25 @@ airbnb$service.fee <- as.numeric(gsub('[$,]', '', airbnb$service.fee))
 airbnb$last.review <- as.Date(airbnb$last.review, format = "%m/%d/%Y")
 ```
 
-```{r cleaned_dataset, include=TRUE}
+```{r view_dataset, include=TRUE}
 head(airbnb)
+```
+
+Then, convert host_identity_verified column to boolean as well
+
+``` {r host_identity, include=FALSE}
+airbnb$host_identity_verified <- ifelse(airbnb$host_identity_verified=="verified", 1, 0)
+```
+``` {r cleaned_data, include=TRUE}
+head(airbnb)
+cat("Number of observations left without NA values: ", nrow(airbnb))
+```
+
+Next, let's check for spelling mistakes in our categorical columns
+
+``` {r check_spelling, include = TRUE}
+unique(airbnb[c("neighbourhood.group")])
+unique(airbnb[c("neighbourhood")])
+unique(airbnb[c("cancellation_policy")])
+unique(airbnb[c("room.type")])
 ```

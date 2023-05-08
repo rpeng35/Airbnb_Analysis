@@ -659,6 +659,280 @@ with dollar signs, we want to make them as numeric.</p>
 ## 5                  3                              1              289
 ## 6                  3                              1              374
 ## 7                  5                              1              224</code></pre>
+<p>Then, convert host_identity_verified column to boolean as well</p>
+<pre><code>##   host_identity_verified neighbourhood.group      neighbourhood
+## 1                      0            Brooklyn         Kensington
+## 2                      1           Manhattan            Midtown
+## 4                      0            Brooklyn       Clinton Hill
+## 5                      1           Manhattan        East Harlem
+## 6                      1           Manhattan        Murray Hill
+## 7                      0            Brooklyn Bedford-Stuyvesant
+##   instant_bookable cancellation_policy       room.type Construction.year price
+## 1                0              strict    Private room              2020   966
+## 2                0            moderate Entire home/apt              2007   142
+## 4                1            moderate Entire home/apt              2005   368
+## 5                0            moderate Entire home/apt              2009   204
+## 6                1            flexible Entire home/apt              2013   577
+## 7                0            moderate    Private room              2015    71
+##   service.fee minimum.nights number.of.reviews last.review reviews.per.month
+## 1         193             10                 9  2021-10-19              0.21
+## 2          28             30                45  2022-05-21              0.38
+## 4          74             30               270  2019-07-05              4.64
+## 5          41             10                 9  2018-11-19              0.10
+## 6         115              3                74  2019-06-22              0.59
+## 7          14             45                49  2017-10-05              0.40
+##   review.rate.number calculated.host.listings.count availability.365
+## 1                  4                              6              286
+## 2                  4                              2              228
+## 4                  4                              1              322
+## 5                  3                              1              289
+## 6                  3                              1              374
+## 7                  5                              1              224</code></pre>
+<pre><code>## Number of observations left without NA values:  85450</code></pre>
+<p>Next, let’s check for spelling mistakes in our categorical
+columns</p>
+<pre><code>##     neighbourhood.group
+## 1              Brooklyn
+## 2             Manhattan
+## 14              brookln
+## 149                    
+## 171       Staten Island
+## 173               Bronx
+## 183              Queens</code></pre>
+<pre><code>##                    neighbourhood
+## 1                     Kensington
+## 2                        Midtown
+## 4                   Clinton Hill
+## 5                    East Harlem
+## 6                    Murray Hill
+## 7             Bedford-Stuyvesant
+## 9                 Hell&#39;s Kitchen
+## 10               Upper West Side
+## 11                     Chinatown
+## 14                   South Slope
+## 16                  West Village
+## 39                      Bushwick
+## 41               Lower East Side
+## 42                  East Village
+## 44                   Fort Greene
+## 109                 Williamsburg
+## 110                       Harlem
+## 111                      Gowanus
+## 134                   Greenpoint
+## 138                    Flatlands
+## 153             Prospect Heights
+## 170              Carroll Gardens
+## 171                   St. George
+## 173                   Highbridge
+## 176           Financial District
+## 183                    Ridgewood
+## 184          Morningside Heights
+## 186                   Park Slope
+## 213                         NoHo
+## 220             Ditmars Steinway
+## 221                  Cobble Hill
+## 225            Flatiron District
+## 228              Windsor Terrace
+## 229             Roosevelt Island
+## 235                         SoHo
+## 236            Greenwich Village
+## 244                      Chelsea
+## 301                 Little Italy
+## 304                       Inwood
+## 307           Washington Heights
+## 311                  Kingsbridge
+## 318                      Astoria
+## 325                  Boerum Hill
+## 362               Queens Village
+## 369               Rockaway Beach
+## 370                Crown Heights
+## 378              Upper East Side
+## 389             Brooklyn Heights
+## 421                       Nolita
+## 435                     Woodlawn
+## 443                    Sunnyside
+## 496                     Gramercy
+## 523                East New York
+## 536    Prospect-Lefferts Gardens
+## 548                             
+## 559            Concourse Village
+## 562               Sheepshead Bay
+## 569             Theater District
+## 573                 Emerson Hill
+## 575             Long Island City
+## 577                Fort Hamilton
+## 579                  Bensonhurst
+## 610                  Sunset Park
+## 612                    Concourse
+## 628                        DUMBO
+## 630                     Kips Bay
+## 673               Brighton Beach
+## 700                   St. Albans
+## 704                     Arrochar
+## 715                East Flatbush
+## 726                Cypress Hills
+## 738                    Rego Park
+## 739                    Wakefield
+## 748                     Woodside
+## 844                     Elmhurst
+## 868                      Clifton
+## 885                    Bay Ridge
+## 907                     Flatbush
+## 959                 Graniteville
+## 968               Spuyten Duyvil
+## 969                    Stapleton
+## 976                    Briarwood
+## 977                   Ozone Park
+## 978                  Columbia St
+## 1035                Vinegar Hill
+## 1062                  Mott Haven
+## 1066             Jackson Heights
+## 1071                    Longwood
+## 1072                    Canarsie
+## 1105                     Jamaica
+## 1110           Battery Park City
+## 1113                     Tribeca
+## 1128                 Two Bridges
+## 1141                Civic Center
+## 1164               East Elmhurst
+## 1169                    Allerton
+## 1180             New Springville
+## 1195              Morris Heights
+## 1273                    Flushing
+## 1329                     Arverne
+## 1342                   Gravesend
+## 1426                 Tottenville
+## 1436               Tompkinsville
+## 1509             Mariners Harbor
+## 1559                     Concord
+## 1609                Borough Park
+## 1690                     Bayside
+## 1691           Downtown Brooklyn
+## 1726                 Port Morris
+## 1751                   Fieldston
+## 1804                 Kew Gardens
+## 1873                     Midwood
+## 1884               College Point
+## 1967                  Mount Eden
+## 2107                 City Island
+## 2196                    Glendale
+## 2260                    Red Hook
+## 2443               Richmond Hill
+## 2829                     Maspeth
+## 2841               Port Richmond
+## 2908                 Shore Acres
+## 2932              Williamsbridge
+## 2985                   Soundview
+## 3022                   Woodhaven
+## 3026                Forest Hills
+## 3052                  Co-op City
+## 3103             Stuyvesant Town
+## 3241                 Parkchester
+## 3248              Middle Village
+## 3351             North Riverdale
+## 3397               Dyker Heights
+## 3441                   Bronxdale
+## 3763                    Sea Gate
+## 3811                   Riverdale
+## 3826           Kew Gardens Hills
+## 3966                 Bay Terrace
+## 4037                     Norwood
+## 4142           Claremont Village
+## 4168                  Whitestone
+## 4228                     Fordham
+## 4289          University Heights
+## 4375                   Bayswater
+## 4479                   Navy Yard
+## 4806                 Brownsville
+## 4863                 Eltingville
+## 5219                  Mount Hope
+## 5468                Clason Point
+## 5547             Lighthouse Hill
+## 5613         Springfield Gardens
+## 5614                 Eastchester
+## 5842                Howard Beach
+## 5995                Belle Harbor
+## 6055             Jamaica Estates
+## 6110                    Van Nest
+## 6370                   Bellerose
+## 6540               Fresh Meadows
+## 6934                 Morris Park
+## 6943               West Brighton
+## 7136                Far Rockaway
+## 7227            South Ozone Park
+## 7228                     Tremont
+## 7302                      Corona
+## 7771                 Great Kills
+## 8020             Manhattan Beach
+## 8290                 Marble Hill
+## 8784                Dongan Hills
+## 9565             East Morrisania
+## 9765                 Hunts Point
+## 9988                    Neponsit
+## 10134                 Pelham Bay
+## 10262              Randall Manor
+## 10712                Throgs Neck
+## 10724                  Todt Hill
+## 10736                 West Farms
+## 10836                Silver Lake
+## 11213                  Laurelton
+## 11625                Grymes Hill
+## 11896             Pelham Gardens
+## 12767                   Rosedale
+## 13684          Castleton Corners
+## 13739                   Edgemere
+## 13817               New Brighton
+## 14237                 Baychester
+## 14750                    Melrose
+## 15432               Bergen Beach
+## 15779            Cambria Heights
+## 16037               Richmondtown
+## 17314               Howland Hook
+## 17399              Schuylerville
+## 17597               Coney Island
+## 18446               Prince&#39;s Bay
+## 18520                South Beach
+## 19010                 Holliswood
+## 19111                 Bath Beach
+## 19471              Midland Beach
+## 19557              Jamaica Hills
+## 19901                    Oakwood
+## 20198                Castle Hill
+## 21631                 Douglaston
+## 21849                   Huguenot
+## 22283                   Edenwald
+## 22312                    Belmont
+## 22596                 Grant City
+## 23451                Westerleigh
+## 23869                 Morrisania
+## 25148 Bay Terrace, Staten Island
+## 25190         Westchester Square
+## 25293                Little Neck
+## 25863                   Rosebank
+## 25882                  Unionport
+## 26237                 Mill Basin
+## 26404                     Hollis
+## 29606              Arden Heights
+## 29740                Bull&#39;s Head
+## 30609                  Olinville
+## 33263                  Rossville
+## 33700               Breezy Point
+## 34163                Willowbrook
+## 34940             New Dorp Beach
+## 51124                  Glen Oaks
+## 52049            Gerritsen Beach
+## 52274                    Woodrow
+## 53138     Chelsea, Staten Island
+## 62176                   New Dorp</code></pre>
+<pre><code>##   cancellation_policy
+## 1              strict
+## 2            moderate
+## 6            flexible</code></pre>
+<pre><code>##             room.type
+## 1        Private room
+## 2     Entire home/apt
+## 41        Shared room
+## 50276      Hotel room</code></pre>
 </div>
 
 
