@@ -31,8 +31,7 @@ airbnb <- subset(airbnb, select=-c(id, NAME, host.name, host.id, country, countr
 colMeans(is.na(airbnb))
 airbnb <- na.omit(airbnb)
 ## number of observations without NA
-print("Number of observations left without NA values")
-nrow(airbnb)
+cat("Number of observations left without NA values: ", nrow(airbnb))
 ```
 
 Attribute instant_bookable is of type string (true or false) we want to convert it to boolean. Attributes price and service.fee are strings with dollar signs, we want to make them as numeric.

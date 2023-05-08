@@ -608,8 +608,8 @@ pm. Please remove shoes in the house.</td>
 </table>
 <p>Before any data analysis can be done, the data needs to be cleaned.
 First, eliminate the columns that does not contribute to our task. Then,
-check for percentage of NA values in each column before omiting the
-obeservations that contain NA values to make sure that the rest of the
+check for percentage of NA values in each column before omitting the
+observations that contain NA values to make sure that the rest of the
 data without NA is still representative of the airbnb market.</p>
 <pre><code>##         host_identity_verified            neighbourhood.group 
 ##                    0.000000000                    0.000000000 
@@ -627,9 +627,8 @@ data without NA is still representative of the airbnb market.</p>
 ##                    0.154767590                    0.003177419 
 ## calculated.host.listings.count               availability.365 
 ##                    0.003109192                    0.004366514</code></pre>
-<pre><code>## [1] &quot;Number of observations left without NA values&quot;</code></pre>
-<pre><code>## [1] 85450</code></pre>
-<p>Attribute instatnt_bookable is of type string (true or false) we want
+<pre><code>## Number of observations left without NA values:  85450</code></pre>
+<p>Attribute instant_bookable is of type string (true or false) we want
 to convert it to boolean. Attributes price and service.fee are strings
 with dollar signs, we want to make them as numeric.</p>
 <pre><code>##   host_identity_verified neighbourhood.group      neighbourhood
