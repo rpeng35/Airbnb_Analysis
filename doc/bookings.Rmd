@@ -1,0 +1,49 @@
+---
+title: "bookings_analysis"
+author: "Ryan Peng"
+date: "2023-05-07"
+output: html_document
+---
+
+```{r library-setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message=FALSE)
+library(tidyverse)
+library(tidymodels)
+library(ggplot2)
+library(GGally)
+```
+
+## Introduction
+
+
+
+## Methods and Results
+
+```{r data, include=TRUE}
+airbnb <- read.csv("../data/airbnb_open_data.csv", header=TRUE)
+knitr::kable(head(airbnb), caption = "Airbnb Dataset")
+```
+
+Before any data analysis can be done, the data needs to be cleaned. First, eliminate the columns that does not contribute to our task. Then, check for percentage of NA values in each column before omitting the observations that contain NA values to make sure that the rest of the data without NA is still representative of the airbnb market. 
+
+```{r clean_data, include=TRUE}
+airbnb <- subset(airbnb, select=-c(id, NAME, host.name, host.id, country, country.code, house_rules, lat, long, license))
+colMeans(is.na(airbnb))
+airbnb <- na.omit(airbnb)
+## number of observations without NA
+print("Number of observations left without NA values")
+nrow(airbnb)
+```
+
+Attribute instant_bookable is of type string (true or false) we want to convert it to boolean. Attributes price and service.fee are strings with dollar signs, we want to make them as numeric.
+
+```{r data_wrangling, include=FALSE}
+airbnb$instant_bookable <- as.integer(as.logical(airbnb$instant_bookable))
+airbnb$price <- as.numeric(gsub('[$,]', '', airbnb$price))
+airbnb$service.fee <- as.numeric(gsub('[$,]', '', airbnb$service.fee))
+airbnb$last.review <- as.Date(airbnb$last.review, format = "%m/%d/%Y")
+```
+
+```{r cleaned_dataset, include=TRUE}
+head(airbnb)
+```
