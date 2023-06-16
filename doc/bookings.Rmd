@@ -11,17 +11,20 @@ library(tidyverse)
 library(tidymodels)
 library(ggplot2)
 library(GGally)
+library(plotly)
 ```
 
-## Introduction
+## Business Task
+*Expand the vacation rental market:* Imagine a real estate management company wants to determine which neighbourhood area in New York City is the most beneficial to expand into. Answer questions about the vacation rental market in New York City by using the [Airbnb Inside open data](http://insideairbnb.com/explore/) which can be found on [Kaggle](https://www.kaggle.com/datasets/arianazmoudeh/airbnbopendata). Investigate how neighborhoods or amenities influence Airbnb prices, what listings are rented most frequently, and determine the area that is most suitable for the company to expand into.
 
 
 
-## Methods and Results
+
+## Procesing data
 
 ```{r data, include=TRUE}
 airbnb <- read.csv("../data/airbnb_open_data.csv", header=TRUE)
-knitr::kable(head(airbnb), caption = "Airbnb Dataset")
+glimpse(airbnb)
 ```
 
 Before any data analysis can be done, the data needs to be cleaned. First, eliminate the columns that does not contribute to our task. Then, check for percentage of NA values in each column before omitting the observations that contain NA values to make sure that the rest of the data without NA is still representative of the airbnb market. 
@@ -30,6 +33,8 @@ Before any data analysis can be done, the data needs to be cleaned. First, elimi
 airbnb <- subset(airbnb, select=-c(id, NAME, host.name, host.id, country, country.code, house_rules, lat, long, license))
 colMeans(is.na(airbnb))
 airbnb <- na.omit(airbnb)
+
+#airbnb <- na.omit(airbnb)
 ## number of observations without NA
 cat("Number of observations left without NA values: ", nrow(airbnb))
 ```
@@ -57,7 +62,7 @@ head(airbnb)
 cat("Number of observations left without NA values: ", nrow(airbnb))
 ```
 
-Next, let's check for spelling mistakes in our categorical columns
+Check for spelling mistakes in our categorical columns
 
 ``` {r check_spelling, include = TRUE}
 unique(airbnb[c("neighbourhood.group")])
@@ -65,3 +70,100 @@ unique(airbnb[c("neighbourhood")])
 unique(airbnb[c("cancellation_policy")])
 unique(airbnb[c("room.type")])
 ```
+
+Correct spelling mistakes
+
+``` {r typo, include = TRUE}
+airbnb$neighbourhood.group <- ifelse(airbnb$neighbourhood.group=="brookln", "Brooklyn", airbnb$neighbourhood.group)
+airbnb <- airbnb %>% filter(neighbourhood.group != "")
+unique(airbnb[c("neighbourhood.group")])
+#airbnb$neighbourhood.group[airbnb$neighbourhood.group==""] <- NA
+#airbnb <- na.omit(airbnb$neighbourhood.group)
+```
+
+
+## Analyze and Visualize
+Get the Airbnb distribution of each borough
+
+``` {r neighbourhoood_group_count, include=TRUE}
+airbnb_distribution <- ggplot(airbnb, aes(x=neighbourhood.group)) +
+                        geom_bar() +
+                        labs(title="Airbnb Count in each Borough", x = "Borough", y = "Count")
+ggplotly(airbnb_distribution)
+```
+
+We can see from the viz above; Manhattan and Brooklyn are the two borughs that have the most airbnbs in New York City
+Next, let's look at the room type distribution, and the built year of all listings across all Boroughs
+
+``` {r roomtype, include=TRUE}
+airbnb_roomtype <- ggplot(airbnb, aes(x=room.type)) +
+                    geom_bar() +
+                    labs(title="Roomtype Count", x = "Room type", y = "Count")
+ggplotly(airbnb_roomtype)
+airbnb_built_year <- ggplot(airbnb, aes(x=Construction.year, fill=neighbourhood.group)) +
+                      geom_bar() +
+                      labs(title="Construction Year of buildings", x="Construction Year", y="Count", fill="Borough")
+ggplotly(airbnb_built_year)
+```
+
+Most common roomtype is entire home/apartment.
+Now, we explore the trends and correlation between the variables.
+Hypotheses: 
+- The newer the building, the higher the price
+- Since most listings are in Manhattan and Brooklyn, Manhattan and Brooklyn gets the most visits (more review entries)
+
+
+``` {r price_vs_construction_year, include=TRUE}
+airbnb$Construction.year <- as.factor(airbnb$Construction.year)
+price_vs_built_year <- ggplot(airbnb, aes(x=Construction.year, y=as.integer(price))) +
+                        geom_boxplot() +
+                        labs(title = "Price vs Built Year", x="Built Year", y="Price")
+ggplotly(price_vs_built_year)
+```
+
+The construction year does not have much influence in price range.
+
+``` {r visits, include=TRUE}
+borough_visits <- ggplot(airbnb, aes(x=neighbourhood.group, y=sum(number.of.reviews))) +
+                  geom_bar(stat = 'identity') +
+                  labs(title="Total Review for each Borough", x="Borough", y="Total Reviews")
+borough_visits
+```
+
+The above distribution is almost identical to the overall airbnb distribution across all boroughs, therefore, it is reasonable to say that the demand for airbnb in Manhattan and Brooklyn is much higher than the demand for other boroughs and that is why the density of airbnb is high in the two boroughs.
+
+``` {r avg_price, include=TRUE} 
+avg_price <- aggregate(price ~ neighbourhood.group, data = airbnb, FUN = mean)
+
+avg_price_plot <- ggplot(avg_price, aes(x=neighbourhood.group, y=price)) +
+                  geom_bar(stat = 'identity') +
+                  labs(title="Average Price for each Borough", x="Borough", y="Average Price")
+ggplotly(avg_price_plot)
+```
+
+It looks like all boroughs have the same averge price of 620-630 per night.
+Now, let us explore the roomtypes in each borough.
+
+``` {r room_type, include=TRUE}
+roomtype_in_borough <- ggplot(airbnb, aes(x=neighbourhood.group, fill=room.type)) +
+                        geom_bar(stat = "count", position = "dodge") +
+                        labs(title="Room Type Distribution for each Borough", x="Borough", y="Count", fill="Room Type")
+ggplotly(roomtype_in_borough)
+```
+
+Entire room and Private room are the two most popular room types in New York City.
+Even though the average price per night across all boroughs are similar, the price could differ based on the roomtypes.
+
+``` {r avg_price_roomtype, include=TRUE}
+avg_price_roomtype <- airbnb %>% 
+  filter(!is.na(price)) %>% 
+  group_by(neighbourhood.group, room.type) %>% 
+  summarise(avg_price = mean(price), .groups = 'drop') %>% 
+  ggplot(aes(x = neighbourhood.group, y = avg_price, fill = neighbourhood.group)) +
+  geom_col(position = 'dodge') +
+  facet_wrap(~room.type) +
+  labs(title="Average Price by Average Price and Borough", x="Borough", y="Average Price")
+ggplotly(avg_price_roomtype)
+```
+
+Private room and entire home/apt both have a average price of just over 600 usd per night while shared room and hotel room have more fluctuations in price across boroughs.
